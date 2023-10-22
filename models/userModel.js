@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema({
-    fistname:{
+    firstname:{
         type:String,
         required:true,
     },
@@ -27,11 +27,13 @@ var userSchema = new mongoose.Schema({
     },
 });
 
+//trigger
 userSchema.pre("save" , async function (next) {
     const salt = await bcrypt.genSaltSync(10) ;
     this.password = await  bcrypt.hash(this.password ,salt)
 })
 
+//add Method "isPasswordMatched"
 userSchema.methods.isPasswordMatched = async function (enterPassword) {
    return await bcrypt.compare(enterPassword , this.password)
 }
