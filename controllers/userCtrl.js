@@ -2,46 +2,72 @@ const { generateToken } = require('../config/jwtToken');
 const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
 
-
-//Register
-const CreateUser = asyncHandler(async (req, res, next)  => {
-    const email = req.body.email
-    const findUser = await User.findOne({email :email}) ;
-    if(!findUser) {
-      //Create new 
-      const newUser = await User.create(req.body) ;
-      res.json({
-       user : newUser ,
-       success : true
-    })
-    }else {
-        throw new Error("User already existe")
-      /* res.json( {
-        msg : 'User already existe' ,
-        success : false
-       })*/
-    }
-});
-
-
-//Login 
-const LoginUserCtr = asyncHandler(async (req, res, next)  => {
-    const {email , password} = req.body ;
-    const findUser = await User.findOne({email}) ;
-    if( findUser && ( await findUser.isPasswordMatched(password))){
+//getALLUsers 
+const GetAllUsers = asyncHandler(async (req, res, next)  => {
+    try {
+        const findAllUsers = await User.find() ;
         res.json({
-            user : findUser ,
-            token : generateToken(findUser?._id) ,
+            data : findAllUsers ,
             success : true
          })
-    }else {
-        throw new Error("Invalid Credentials")
+    } catch (error) {
+        throw new Error(error)
     }
-
-    
-})
+ })
 
 
+ //getOne 
+ const GetUserById = asyncHandler(async (req, res, next)  => {
+    const { id} = req.params
+    try {
+        const findUser = await User.findById(id) ;
+        res.json({
+            data : findUser ,
+            success : true
+         })
+    } catch (error) {
+        throw new Error(error)
+    }
+ })
+ 
 
 
-module.exports = {CreateUser ,LoginUserCtr}
+  //delete One
+  const DeleteUser = asyncHandler(async (req, res, next)  => {
+    const { id} = req.params
+    try {
+        const findUser = await User.findByIdAndDelete(id) ;        
+        res.json({
+     //       data : findUser ,
+            success : true
+         })
+    } catch (error) {
+        throw new Error(error)
+    }
+ })
+ 
+   //update One
+   const UpdateUser = asyncHandler(async (req, res, next)  => {
+    const { id} = req.params
+    try {
+        const UserUpdated = await User.findByIdAndUpdate(id , {
+           firstname :  req.body?.firstname ,
+           lastname :  req.body.lastname ,
+           mobile :  req.body?.mobile ,
+           email :  req.body?.email ,
+        } , {
+            new:true
+        }) ;        
+        res.json({
+            data : UserUpdated ,
+            success : true
+         })
+    } catch (error) {
+        throw new Error(error)
+    }
+ })
+ 
+
+ 
+
+module.exports = {GetAllUsers ,GetUserById ,DeleteUser ,UpdateUser}

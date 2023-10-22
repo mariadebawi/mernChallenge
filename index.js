@@ -4,6 +4,8 @@ const app = express()
 const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 4000  ;
 const authRouter = require('./routes/authRoute');
+const userRouter = require('./routes/userRoute');
+
 const bodyParser = require('body-parser');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
 dbConnect() ;
@@ -16,7 +18,12 @@ app.use(bodyParser.urlencoded({extended :false}))
 }) */
 
 /////AUTH
-app.use('/api/user' ,authRouter)
+app.use('/api/auth' ,authRouter)
+
+/////CRUD USERS
+app.use('/api/users' ,userRouter)
+
+
 
 app.use(notFound)
 app.use(errorHandler)

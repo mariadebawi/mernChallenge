@@ -2,6 +2,9 @@
 const notFound = (req, res, next) => {
     const error = new Error (`not Found' : ${req.originUrl}`)
     res.send(400) ;
+    res.json({
+        success : false
+    })
     next(error)
 }
 
