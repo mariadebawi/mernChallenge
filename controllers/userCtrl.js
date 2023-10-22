@@ -1,3 +1,4 @@
+const { generateToken } = require('../config/jwtToken');
 const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
 
@@ -28,6 +29,7 @@ const LoginUserCtr = asyncHandler(async (req, res, next)  => {
     if( findUser && ( await findUser.isPasswordMatched(password))){
         res.json({
             user : findUser ,
+            token : generateToken(findUser._id) ,
             success : true
          })
     }else {
