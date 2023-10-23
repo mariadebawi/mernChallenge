@@ -1,4 +1,3 @@
-const { generateToken } = require('../config/jwtToken');
 const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
 
@@ -55,6 +54,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
            lastname :  req.body.lastname ,
            mobile :  req.body?.mobile ,
            email :  req.body?.email ,
+           role :  req.body?.role ,
         } , {
             new:true
         }) ;        
@@ -68,6 +68,32 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
  })
  
 
+    //update profile
+    const UpdateProfile = asyncHandler(async (req, res, next)  => {
+        const { _id} = req.user
+        try {
+            const UserUpdated = await User.findByIdAndUpdate(_id , {
+               firstname :  req.body?.firstname ,
+               lastname :  req.body.lastname ,
+               mobile :  req.body?.mobile ,
+               email :  req.body?.email ,
+               role :  req.body?.role ,
+            } , {
+                new:true
+            }) ;        
+            res.json({
+                data : UserUpdated ,
+                success : true
+             })
+        } catch (error) {
+            throw new Error(error)
+        }
+     })
+
+
  
 
-module.exports = {GetAllUsers ,GetUserById ,DeleteUser ,UpdateUser}
+
+ 
+
+module.exports = {GetAllUsers ,GetUserById ,DeleteUser ,UpdateUser ,UpdateProfile}
