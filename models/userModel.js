@@ -37,6 +37,10 @@ var userSchema = new mongoose.Schema({
         type: Array,
         default: [],
     },
+    refreshToken: {
+        type: String,
+      
+    },
     address: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
