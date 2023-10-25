@@ -72,4 +72,34 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
  })
 
 
-module.exports = { CreateUser, LoginUserCtr ,handleRefreshToken }
+ //logout
+ const logout = asyncHandler(async (req, res, next) => {
+    const cookie = req.cookies ;
+    if(!cookie.refreshToken) throw Error('No refresh token exist')
+    const refreshToken = cookie.refreshToken ;
+    const user = await User.findOne({refreshToken})
+   // console.log(user);
+     if(!user){
+        res.clearCookie('refreshToken' , {
+            httpOnly :true ,
+            secure:true
+        })
+        return res.sendStatus(204) //forbidden 
+     }
+   
+     await User.findByIdAndUpdate(user.id , {
+        refreshToken :""
+     })
+
+     res.clearCookie('refreshToken' , {
+        httpOnly :true ,
+        secure:true
+    })
+    return res.sendStatus(204) //forbidden 
+
+  })
+
+
+
+
+module.exports = { CreateUser, LoginUserCtr ,handleRefreshToken ,logout }
