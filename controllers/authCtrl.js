@@ -4,6 +4,8 @@ const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
 const jwt = require('jsonwebtoken');
 const validateMongoDbId = require('../utils/validateMongodbId');
+const sendEmail = require('./emailCtrl');
+const crypto = require('crypto');
 
 
 //Register
@@ -121,7 +123,50 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
   })
 
 
+    //forgotPassword
+    const forgotPassword = asyncHandler(async (req, res, next)  => {
+      const  {email}  = req.body ;
+      const user = await User.findOne({email}) ;
+      if(!user) { throw new Error('user not found with this email')}
+      try {
+        const token = await user.createPasswordResetToken() ;
+        await user.save() ;
+        const resetURL = `Hi , please follow this link to reset your password .
+        this link is valid till 10 minutes from now .
+        <a href="http://localhost:5000/api/auth/reset-password/${token}"> Click here</a>`
+        const data = {
+            to : email ,
+            text : "Hi user" ,
+            subject: "Forgot password" ,
+            html : resetURL
+        }
+        sendEmail(data) ;
+        res.json({msg : "Check your email to reset your password"})
+      } catch (error) {
+        throw new Error(error)
+      }
+    })
 
+   //Reset password
 
+   const resetPassword = asyncHandler(async (req, res, next)  => {
+     const { newPassword} = req.body ;
+     const { token } = req.params ;
+     const hashToken = crypto.createHash("sha256").update(token).digest("hex")
+     const user = await User.findOne({
+        passwordResetToken : hashToken ,
+        passwordResetExpires : {$gt : Date.now()}
+     })
+    // console.log(user);
+     if(!user) { throw new Error('user not found with this email')}
+     user.password = newPassword
+     user.passwordResetToken = undefined
+     user.passwordResetExpires = undefined
+     await user.save() ;
+     res.json({
+        user: user,
+        success: true
+    })
+   })
 
-module.exports = { CreateUser, LoginUserCtr ,handleRefreshToken ,logout  ,updatePassword}
+module.exports = { CreateUser, forgotPassword,resetPassword ,LoginUserCtr ,handleRefreshToken ,logout  ,updatePassword}
