@@ -2,7 +2,7 @@ const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler');
 const validateMongoDbId = require('../utils/validateMongodbId');
 
-//getALLUsers 
+//getALLUsers
 const GetAllUsers = asyncHandler(async (req, res, next)  => {
     try {
         const findAllUsers = await User.find() ;
@@ -16,7 +16,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
  })
 
 
- //getOne 
+ //getOne
  const GetUserById = asyncHandler(async (req, res, next)  => {
     const { id} = req.params
     validateMongoDbId(id);
@@ -31,7 +31,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
         throw new Error(error)
     }
  })
- 
+
 
 
   //delete One
@@ -40,7 +40,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
     validateMongoDbId(id);
 
     try {
-        const findUser = await User.findByIdAndDelete(id) ;        
+        const findUser = await User.findByIdAndDelete(id) ;
         res.json({
      //       data : findUser ,
             success : true
@@ -49,7 +49,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
         throw new Error(error)
     }
  })
- 
+
    //update One
    const UpdateUser = asyncHandler(async (req, res, next)  => {
     const { id} = req.params
@@ -64,7 +64,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
            role :  req.body?.role ,
         } , {
             new:true
-        }) ;        
+        }) ;
         res.json({
             data : UserUpdated ,
             success : true
@@ -73,7 +73,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
         throw new Error(error)
     }
  })
- 
+
 
     //update profile
     const UpdateProfile = asyncHandler(async (req, res, next)  => {
@@ -86,10 +86,10 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
                lastname :  req.body.lastname ,
                mobile :  req.body?.mobile ,
                email :  req.body?.email ,
-              
+
             } , {
                 new:true
-            }) ;        
+            }) ;
             res.json({
                 data : UserUpdated ,
                 success : true
@@ -109,7 +109,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
                isBlocked :  req?.body?.isBlocked  ,
             } , {
                 new:true
-            }) ;      
+            }) ;
             res.json({
                 data : UserUpdated ,
                 success : true
@@ -119,6 +119,7 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
             throw new Error(error)
         }
     })
+
 
 
 

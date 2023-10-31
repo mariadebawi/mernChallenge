@@ -2,7 +2,8 @@ const { generateToken } = require('../config/jwtToken');
 const { generateRefreshToken } = require('../config/refreshToken');
 const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const validateMongoDbId = require('../utils/validateMongodbId');
 
 
 //Register
@@ -10,7 +11,7 @@ const CreateUser = asyncHandler(async (req, res, next) => {
     const email = req.body.email
     const findUser = await User.findOne({ email: email });
     if (!findUser) {
-        //Create new 
+        //Create new
         const newUser = await User.create(req.body);
         res.json({
             user: newUser,
@@ -26,14 +27,14 @@ const CreateUser = asyncHandler(async (req, res, next) => {
 });
 
 
-//Login 
+//Login
 const LoginUserCtr = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
     const findUser = await User.findOne({ email });
     if (findUser && (await findUser.isPasswordMatched(password))) {
         const refreshToken = await generateRefreshToken(findUser?._id)
         const updateUser = await User.findByIdAndUpdate(
-            findUser?._id, 
+            findUser?._id,
             { refreshToken : refreshToken  },
             { new: true }
             ) ;
@@ -53,7 +54,7 @@ const LoginUserCtr = asyncHandler(async (req, res, next) => {
 })
 
 
-//refresh Token 
+//refresh Token
 const handleRefreshToken = asyncHandler(async (req, res, next) => {
     const cookie = req.cookies ;
     if(!cookie.refreshToken) throw Error('No refresh token exist')
@@ -61,14 +62,14 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
     const user = await User.findOne({refreshToken})
     if(!user) throw Error('No refresh token present in db or not matched');
     jwt.verify(refreshToken , process.env.JWT_SECRET , (err, decoded) => {
-       
+
        if(err || user.id !== decoded.id) {
         throw Error('there is something wrong with refresh token')
-       } 
+       }
        const accessToken = generateToken(user.id)
        res.json({accessToken})
     })
-    
+
  })
 
 
@@ -84,9 +85,10 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
             httpOnly :true ,
             secure:true
         })
-        return res.sendStatus(204) //forbidden 
+
+        return res.sendStatus(204) //forbidden
      }
-   
+
      await User.findByIdAndUpdate(user.id , {
         refreshToken :""
      })
@@ -95,11 +97,31 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
         httpOnly :true ,
         secure:true
     })
-    return res.sendStatus(204) //forbidden 
 
+    return res.sendStatus(204) //forbidden
+
+  })
+
+
+  //updatePassword
+  const updatePassword = asyncHandler(async (req, res, next)  => {
+      const { _id } = req.user._id ;
+      const { newPassword} = req.body ;
+      validateMongoDbId(_id);
+      const userConnected = await User.findById(_id) ;
+      if(newPassword) {
+        userConnected.password = newPassword ;
+        const updateUSer = await userConnected.save();
+        res.json({
+            user: updateUSer,
+            success: true
+        })
+
+      }
   })
 
 
 
 
-module.exports = { CreateUser, LoginUserCtr ,handleRefreshToken ,logout }
+
+module.exports = { CreateUser, LoginUserCtr ,handleRefreshToken ,logout  ,updatePassword}
