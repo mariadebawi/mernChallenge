@@ -54,6 +54,24 @@ const GetAllProducts = asyncHandler(async (req, res, next) => {
     }
 })
 
+ //getOne
+ const GetProductById = asyncHandler(async (req, res, next)  => {
+    const { id} = req.params
+    validateMongoDbId(id);
+
+    try {
+        const findProduct = await Product.findById(id) ;
+        res.json({
+            data : findProduct ,
+            success : true
+         })
+    } catch (error) {
+        throw new Error(error)
+    }
+ })
+
+
+
 
 const CreateProduct = asyncHandler(async (req, res, next) => {
     try {
@@ -113,5 +131,6 @@ module.exports = {
     GetAllProducts,
     CreateProduct,
     UpdateProduct,
-    DeleteProduct
+    DeleteProduct,
+    GetProductById
 }
