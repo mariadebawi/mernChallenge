@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 4000  ;
 const authRouter = require('./routes/authRoute');
 const userRouter = require('./routes/userRoute');
 const productRouter = require('./routes/productRoute');
+const blogRouter = require('./routes/blogRoute');
 
 app.use(morgan("dev"))
 
@@ -36,6 +37,9 @@ app.use('/api/users' ,userRouter)
 /////CRUD PRODUCTS
 app.use('/api/products' ,productRouter)
 
+
+/////CRUD blogs
+app.use('/api/blogs' ,blogRouter)
 
 app.use(notFound)
 app.use(errorHandler)
