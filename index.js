@@ -11,6 +11,7 @@ const blogRouter = require('./routes/blogRoute');
 const categoryProductRouter = require('./routes/productCategoryRoute');
 const categoryBlogRouter = require('./routes/blogCategoryRoute');
 const brandRouter = require('./routes/brandRoute');
+const couponRouter = require('./routes/couponRoute');
 
 app.use(morgan("dev"))
 
@@ -51,6 +52,10 @@ app.use('/api/categoriesBlog' ,categoryBlogRouter)
 
 /////CRUD brands
 app.use('/api/brands' ,brandRouter)
+
+
+/////CRUD coupons
+app.use('/api/coupons' ,couponRouter)
 
 
 app.use(notFound)
