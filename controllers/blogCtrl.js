@@ -40,8 +40,6 @@ const GetBlogById = asyncHandler(async (req, res, next) => {
            const findBlog = await Blog.findById(id)
            .populate('likes' ,{ firstname: 1, lastname: 1 , mobile: 1} )
            .populate('dislikes' ,{ firstname: 1, lastname: 1, mobile: 1 })
-
-
            await Blog.findByIdAndUpdate(
             id,
             {$inc: { numViews: 1 }    },

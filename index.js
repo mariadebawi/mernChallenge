@@ -8,6 +8,8 @@ const authRouter = require('./routes/authRoute');
 const userRouter = require('./routes/userRoute');
 const productRouter = require('./routes/productRoute');
 const blogRouter = require('./routes/blogRoute');
+const categoryProductRouter = require('./routes/productCategoryRoute');
+const categoryBlogRouter = require('./routes/blogCategoryRoute');
 
 app.use(morgan("dev"))
 
@@ -37,9 +39,14 @@ app.use('/api/users' ,userRouter)
 /////CRUD PRODUCTS
 app.use('/api/products' ,productRouter)
 
-
 /////CRUD blogs
 app.use('/api/blogs' ,blogRouter)
+
+/////CRUD categoriesProduct
+app.use('/api/categoriesProduct' ,categoryProductRouter)
+
+/////CRUD categories
+app.use('/api/categoriesBlog' ,categoryBlogRouter)
 
 app.use(notFound)
 app.use(errorHandler)
