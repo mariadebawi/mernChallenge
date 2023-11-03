@@ -39,7 +39,7 @@ const LoginUserCtr = asyncHandler(async (req, res, next) => {
             findUser?._id,
             { refreshToken : refreshToken  },
             { new: true }
-            ) ;
+            );
         res.cookie('refreshToken' , refreshToken,{
             httpOnly:true,
             maxAge : 72  * 60 * 60 * 1000
@@ -136,47 +136,6 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
   })
 
 
-  //updatePassword
-  const updatePassword = asyncHandler(async (req, res, next)  => {
-      const { _id } = req.user._id ;
-      const { newPassword} = req.body ;
-      validateMongoDbId(_id);
-      const userConnected = await User.findById(_id) ;
-      if(newPassword) {
-        userConnected.password = newPassword ;
-        const updateUSer = await userConnected.save();
-        res.json({
-            user: updateUSer,
-            success: true
-        })
-
-      }
-  })
-
-
-    //forgotPassword
-    const forgotPassword = asyncHandler(async (req, res, next)  => {
-      const  {email}  = req.body ;
-      const user = await User.findOne({email}) ;
-      if(!user) { throw new Error('user not found with this email')}
-      try {
-        const token = await user.createPasswordResetToken() ;
-        await user.save() ;
-        const resetURL = `Hi , please follow this link to reset your password .
-        this link is valid till 10 minutes from now .
-        <a href="http://localhost:5000/api/auth/reset-password/${token}"> Click here</a>`
-        const data = {
-            to : email ,
-            text : "Hi user" ,
-            subject: "Forgot password" ,
-            html : resetURL
-        }
-        sendEmail(data) ;
-        res.json({msg : "Check your email to reset your password"})
-      } catch (error) {
-        throw new Error(error)
-      }
-    })
 
    //Reset password
 
@@ -200,4 +159,7 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
     })
    })
 
-module.exports = {  LoginAdminCtr ,CreateUser, forgotPassword,resetPassword ,LoginUserCtr ,handleRefreshToken ,logout  ,updatePassword}
+
+
+
+module.exports = {  LoginAdminCtr ,CreateUser,resetPassword ,LoginUserCtr ,handleRefreshToken ,logout  }

@@ -117,7 +117,7 @@ const likeBlog = asyncHandler(async (req, res) => {
         },
         { new: true }
       )
-   
+
       res.json(blog);
     }
     if (isLiked) {
@@ -240,38 +240,6 @@ const UploadPictures = asyncHandler(async (req, res, next) => {
   }
 })
 
-/*
-const UploadPictures = asyncHandler(async (req, res, next) => {
-  const { blogId } = req.params;
-  validateMongoDbId(blogId);
-  try {
-
-    const uploader = (path) => cloudinaryUploadImg(path , "images") ;
-    const urls = []
-    const files = req.files
-     for(const file of files ) {
-      const {path} = file
-      const newpath = await uploader(path)
-      urls.push(newpath)
-     }
-
-
-     const findBlog = await Blog.findByIdAndUpdate(
-      blogId ,
-      {
-          images :  urls.map((file) => {  return file })
-
-      },{ new:true}
-     )
-     res.json({
-      data: findBlog,
-      success: true
-  })
-
-  } catch (error) {
-      throw new Error(error)
-  }
-})*/
 
 
 

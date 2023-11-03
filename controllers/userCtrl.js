@@ -75,29 +75,6 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
  })
 
 
-    //update profile
-    const UpdateProfile = asyncHandler(async (req, res, next)  => {
-        const { _id} = req.user
-        validateMongoDbId(_id);
-
-        try {
-            const UserUpdated = await User.findByIdAndUpdate(_id , {
-               firstname :  req.body?.firstname ,
-               lastname :  req.body.lastname ,
-               mobile :  req.body?.mobile ,
-               email :  req.body?.email ,
-
-            } , {
-                new:true
-            }) ;
-            res.json({
-                data : UserUpdated ,
-                success : true
-             })
-        } catch (error) {
-            throw new Error(error)
-        }
-     })
 
 
        //block/unblock profile
@@ -128,6 +105,5 @@ module.exports = {
     GetUserById ,
     DeleteUser ,
     UpdateUser ,
-    UpdateProfile,
     changeStatus
 }

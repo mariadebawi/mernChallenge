@@ -6,12 +6,15 @@ const dotenv = require('dotenv').config()
 const PORT = process.env.PORT || 4000  ;
 const authRouter = require('./routes/authRoute');
 const userRouter = require('./routes/userRoute');
+const meRouter = require('./routes/meRoute');
+
 const productRouter = require('./routes/productRoute');
 const blogRouter = require('./routes/blogRoute');
 const categoryProductRouter = require('./routes/productCategoryRoute');
 const categoryBlogRouter = require('./routes/blogCategoryRoute');
 const brandRouter = require('./routes/brandRoute');
 const couponRouter = require('./routes/couponRoute');
+const adressRouter = require('./routes/adressRoute');
 
 app.use(morgan("dev"))
 
@@ -38,6 +41,8 @@ app.use('/api/auth' ,authRouter)
 /////CRUD USERS
 app.use('/api/users' ,userRouter)
 
+app.use('/api/me' , meRouter)
+
 /////CRUD PRODUCTS
 app.use('/api/products' ,productRouter)
 
@@ -52,6 +57,10 @@ app.use('/api/categoriesBlog' ,categoryBlogRouter)
 
 /////CRUD brands
 app.use('/api/brands' ,brandRouter)
+
+
+/////CRUD adress
+app.use('/api/adress' ,adressRouter)
 
 
 /////CRUD coupons

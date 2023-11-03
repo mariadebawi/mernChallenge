@@ -15,7 +15,6 @@ router.get('/allUsers', GetAllUsers)
 router.get('/:id', authMiddleware, GetUserById)
 router.delete('/:id', authMiddleware, isAdmin, DeleteUser)
 router.put('/:id', authMiddleware, isAdmin, UpdateUser)
-router.put("/profile/edit-profile", authMiddleware, UpdateProfile);//updateME , updateProfile
 router.patch("/changeStatus/:id", authMiddleware, isAdmin, changeStatus)
 
 
