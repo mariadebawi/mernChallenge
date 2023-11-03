@@ -194,7 +194,7 @@ const Rating = asyncHandler(async (req, res, next) => {
                     rating: { $elemMatch: alreadyRating }
                 },
                 {
-                    $set: { "ratings.$.star": start ,"ratings.$.comment": comment }
+                    $set: { "ratings.$.star": start, "ratings.$.comment": comment }
                 }
             )
 
@@ -205,8 +205,8 @@ const Rating = asyncHandler(async (req, res, next) => {
                     $push: {
                         rating: {
                             postedBy: loginUserId,
-                            star: start ,
-                            comment :comment
+                            star: start,
+                            comment: comment
                         },
 
                     },
@@ -219,24 +219,24 @@ const Rating = asyncHandler(async (req, res, next) => {
         }
 
         const getTotalRating = await Product.findById(productID);
-        let totalRating =  getTotalRating.rating.length
-        let ratingSum = getTotalRating.rating.map( (item) => item.star)
-        .reduce((prev , curr) => prev + curr ,0  )
-        let ratingResult = Math.round( ratingSum / totalRating)
+        let totalRating = getTotalRating.rating.length
+        let ratingSum = getTotalRating.rating.map((item) => item.star)
+            .reduce((prev, curr) => prev + curr, 0)
+        let ratingResult = Math.round(ratingSum / totalRating)
 
         const productRated = await Product.findByIdAndUpdate(
             productID,
             {
-                totalrating :ratingResult
-             },
+                totalrating: ratingResult
+            },
 
-            {new:true}
-            )
+            { new: true }
+        )
 
-            res.json({
-                data: productRated,
-                success: true
-            })
+        res.json({
+            data: productRated,
+            success: true
+        })
 
     } catch (error) {
         throw new Error(error)
@@ -248,26 +248,30 @@ const UploadPictures = asyncHandler(async (req, res, next) => {
     const { productID } = req.params;
     validateMongoDbId(productID);
     try {
-      const uploader = (path) => cloudinaryUploadImg(path , "images") ;
-      const urls = []
-      const files = req.files
-       for(const file of files ) {
-        const {path} = file
-        const newpath = await uploader(path)
-        urls.push(newpath)
-       // fs.unlinkSync(path)
-       }
-       const findProduct = await Product.findByIdAndUpdate(
-        productID ,
-        {
-            images :  urls.map((file) => {  return file })
+        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        //const urls = []
+        let newpath;
+        const files = req.files
+        for (const file of files) {
+            const { path } = file
+            newpath = await uploader(path)
+            //  urls.push(newpath)
+            // fs.unlinkSync(path)
+        }
+        const findProduct = await Product.findByIdAndUpdate(
+            productID,
+            {
+                $push: {
+                    images: newpath
+                }
 
-        },{ new:true}
-       )
-       res.json({
-        data: findProduct,
-        success: true
-    })
+
+            }, { new: true }
+        )
+        res.json({
+            data: findProduct,
+            success: true
+        })
 
     } catch (error) {
         throw new Error(error)
@@ -283,6 +287,6 @@ module.exports = {
     DeleteProduct,
     GetProductById,
     addToWishList,
-    Rating ,
+    Rating,
     UploadPictures
 }

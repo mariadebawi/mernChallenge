@@ -7,13 +7,14 @@ const router = express.Router() ;
 router.get('/getAll' ,GetAllProducts )
 router.get('/:id', authMiddleware, GetProductById)
 router.post('/createProduct',authMiddleware , isAdmin,CreateProduct )
+router.put('/uploadFiles/:productID', authMiddleware, isAdmin,
+uploadPhoto.array("images" ,100),
+productImgResize ,UploadPictures)
 router.put('/:id', authMiddleware, isAdmin, UpdateProduct)
 router.delete('/:id', authMiddleware, isAdmin, DeleteProduct)
 router.put('/addToWishList/:productID', authMiddleware, addToWishList)
 router.put('/rating/:productID', authMiddleware, Rating)
-router.put('/uploadFiles/:productID', authMiddleware, isAdmin,
-uploadPhoto.array("images" ,100),
-productImgResize ,UploadPictures)
+
 
 
 module.exports = router
