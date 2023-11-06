@@ -73,8 +73,27 @@ const GetAllUsers = asyncHandler(async (req, res, next)  => {
         throw new Error(error)
     }
  })
+   //update role
 
+ const updateRole = asyncHandler(async (req, res, next)  => {
+    const {id } = req.params ;
+    validateMongoDbId(id);
 
+    try {
+        const UserUpdated = await User.findByIdAndUpdate(id , {
+           role :  req?.body?.role  ,
+        } , {
+            new:true
+        }) ;
+        res.json({
+            data : UserUpdated ,
+            success : true
+         })
+    } catch (error) {
+
+        throw new Error(error)
+    }
+ })
 
 
        //block/unblock profile
@@ -105,5 +124,6 @@ module.exports = {
     GetUserById ,
     DeleteUser ,
     UpdateUser ,
-    changeStatus
+    changeStatus,
+    updateRole
 }
