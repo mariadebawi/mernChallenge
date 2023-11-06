@@ -12,20 +12,20 @@ const { cloudinaryUploadImg } = require('../utils/cloudinary');
 const GetAllProducts = asyncHandler(async (req, res, next) => {
     try {
 
-        //filter
         const queryObj = { ...req.query }
-        const exculdeFileds = ['page', "sort", "limit", "fields"]
+
+        const exculdeFileds = ['page', "sort", "limit", "fields" ]
         exculdeFileds.forEach((el) => delete queryObj[el])
         let queryStr = JSON.stringify(queryObj)
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
-        let query = Product.find(JSON.parse(queryStr))
-        const productCount = await Product.countDocuments();
+        //console.log(queryStr);
+        let query =Product.find(JSON.parse(queryStr))
         //sorting
         if (req.query.sort) {
             const sortBy = req.query.sort.split(",").join(" ")
             query = query.sort(sortBy)
         } else {
-            query = query.sort('-createdAt')
+            query = query.sort('-createdAt' )
         }
 
         //Limiting fields
@@ -47,16 +47,25 @@ const GetAllProducts = asyncHandler(async (req, res, next) => {
             if (skip >= productCount) throw new Error('this page does not exist')
         }
 
-        const findAll = await query;
+        const findAll = await query.where('publish').equals(1)
+        .populate('brand' , 'title -_id')
+        .populate('category' , 'title -_id')
+        .populate('color' , 'title -_id')
+
+       // const productCount = await Product.countDocuments();
+
+        const productCount = findAll.length;
         res.json({
-            data: findAll,
             count: productCount,
+            data: findAll,
             success: true
         })
     } catch (error) {
         throw new Error(error)
     }
 })
+
+
 
 //getOne
 const GetProductById = asyncHandler(async (req, res, next) => {
@@ -92,7 +101,6 @@ const CreateProduct = asyncHandler(async (req, res, next) => {
     }
 })
 
-
 //update One
 const UpdateProduct = asyncHandler(async (req, res, next) => {
     const { id } = req.params
@@ -111,6 +119,8 @@ const UpdateProduct = asyncHandler(async (req, res, next) => {
         throw new Error(error)
     }
 })
+
+
 
 
 //delete One
@@ -279,6 +289,65 @@ const UploadPictures = asyncHandler(async (req, res, next) => {
 })
 
 
+//archive One
+const archiveProduct = asyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    validateMongoDbId(id);
+
+    try {
+        const productUpdated = await Product.findByIdAndUpdate(id,
+            {publish : 0},
+            {
+                new: true
+            });
+        res.json({
+            data: productUpdated,
+            success: true
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+
+//restore One
+const restoreProduct = asyncHandler(async (req, res, next) => {
+    const { id } = req.params
+    validateMongoDbId(id);
+
+    try {
+        const productUpdated = await Product.findByIdAndUpdate(id,
+            {publish : 1},
+            {
+                new: true
+            });
+        res.json({
+            data: productUpdated,
+            success: true
+        })
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
+
+
+//getAllRestore
+const getAllArchive = asyncHandler(async (req, res, next) => {
+    try {
+        const findAllRestore = await Product.where('publish').equals(0)
+        const productCount = findAllRestore.length;
+        res.json({
+            count: productCount,
+            data: findAllRestore,
+            success: true
+        })
+
+    } catch (error) {
+        throw new Error(error)
+    }
+ })
+
 
 module.exports = {
     GetAllProducts,
@@ -288,5 +357,8 @@ module.exports = {
     GetProductById,
     addToWishList,
     Rating,
-    UploadPictures
+    UploadPictures ,
+    archiveProduct,
+    restoreProduct ,
+    getAllArchive
 }
