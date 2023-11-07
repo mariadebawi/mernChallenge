@@ -5,7 +5,7 @@ const fs = require('fs')
 const asyncHandler = require('express-async-handler')
 const slugify = require('slugify');
 const validateMongoDbId = require('../utils/validateMongodbId');
-const { cloudinaryUploadImg } = require('../utils/cloudinary');
+const { cloudinaryUploadImg  ,cloudinaryDeleteImg} = require('../utils/cloudinary');
 
 
 //getAllProducts
@@ -289,6 +289,34 @@ const UploadPictures = asyncHandler(async (req, res, next) => {
 })
 
 
+const deletePictures = asyncHandler(async (req, res, next) => {
+    const { productID , public_id } = req.params;
+    const { image } = req.body.image;
+
+    validateMongoDbId(productID);
+    try {
+        const uploader =  cloudinaryDeleteImg(req.body.image);
+
+        const findProduct = await Product.findByIdAndUpdate(
+            productID,
+            {
+                $pull: {
+                    images: image
+                }
+
+
+            }, { new: true }
+        )
+        res.json({
+            data: findProduct,
+            success: true
+        })
+
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
 //archive One
 const archiveProduct = asyncHandler(async (req, res, next) => {
     const { id } = req.params
@@ -360,5 +388,6 @@ module.exports = {
     UploadPictures ,
     archiveProduct,
     restoreProduct ,
-    getAllArchive
+    getAllArchive ,
+    deletePictures
 }

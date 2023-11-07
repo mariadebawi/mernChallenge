@@ -7,13 +7,15 @@ const PORT = process.env.PORT || 4000  ;
 const authRouter = require('./routes/authRoute');
 const userRouter = require('./routes/userRoute');
 const meRouter = require('./routes/meRoute');
-
 const productRouter = require('./routes/productRoute');
 const blogRouter = require('./routes/blogRoute');
 const categoryProductRouter = require('./routes/productCategoryRoute');
 const categoryBlogRouter = require('./routes/blogCategoryRoute');
 const brandRouter = require('./routes/brandRoute');
 const colorsRouter = require('./routes/colorRoute');
+const tagsRouter = require('./routes/tagRoute');
+const cartRouter = require('./routes/cartOrderRoute');
+
 
 const couponRouter = require('./routes/couponRoute');
 const adressRouter = require('./routes/adressRoute');
@@ -63,9 +65,15 @@ app.use('/api/brands' ,brandRouter)
 /////CRUD brands
 app.use('/api/colors' ,colorsRouter)
 
+/////CRUD tag
+app.use('/api/tags' ,tagsRouter)
 
 /////CRUD adress
 app.use('/api/adress' ,adressRouter)
+
+
+/////CRUD cart
+app.use('/api/cart' ,cartRouter)
 
 
 /////CRUD coupons

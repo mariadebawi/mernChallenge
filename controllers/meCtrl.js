@@ -106,5 +106,4 @@ const UpdatedAdress = asyncHandler(async (req, res, next) => {
 
 
 
-
-module.exports = {findMe , UpdateProfile , updatePassword ,getWishList ,UpdatedAdress}
+module.exports = { findMe  , UpdateProfile , updatePassword ,getWishList ,UpdatedAdress}

@@ -21,8 +21,9 @@ const CreateBlog = asyncHandler(async (req, res, next) => {
 const GetAllBlogs = asyncHandler(async (req, res, next) => {
   try {
     const findAllblogs = await Blog.find()
-    .populate('likes', { firstname: 1, lastname: 1, mobile: 1 })
-    .populate('dislikes', { firstname: 1, lastname: 1, mobile: 1 });
+    .populate('likes', { firstname: 1, lastname: 1, mobile: 1   })
+    .populate('dislikes', { firstname: 1, lastname: 1, mobile: 1  })
+    .populate('category' , 'title -_id')
     res.json({
       data: findAllblogs,
       success: true

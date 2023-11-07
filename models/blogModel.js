@@ -10,10 +10,11 @@ var blogSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    category: {
-        type: String,
-        required: true,
-    },
+
+    category:  {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BlogCategory' ,
+  },
     numViews: {
         type: Number,
         default: 0,

@@ -1,6 +1,6 @@
 const express = require('express');
 const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
-const { GetAllProducts, Rating ,UploadPictures ,CreateProduct, UpdateProduct, DeleteProduct, GetProductById, addToWishList, archiveProduct, restoreProduct, getAllArchive } = require('../controllers/productCtrl');
+const { GetAllProducts, Rating ,UploadPictures ,CreateProduct, UpdateProduct, DeleteProduct, GetProductById, addToWishList, archiveProduct, restoreProduct, getAllArchive, deletePictures } = require('../controllers/productCtrl');
 const { uploadPhoto, productImgResize, blogImgResize } = require('../middlewares/uploadImage');
 const router = express.Router() ;
 
@@ -13,6 +13,9 @@ router.put('/uploadFiles/:productID', authMiddleware, isAdmin,
 uploadPhoto.array("images" ,100),
 productImgResize ,UploadPictures)
 router.put('/:id', authMiddleware, isAdmin, UpdateProduct)
+
+router.put('/deletePicture/:productID/:public_id', authMiddleware, isAdmin, deletePictures)
+
 router.patch('/archiveProduct/:id', authMiddleware, isAdmin, archiveProduct)
 router.patch('/restoreProduct/:id', authMiddleware, isAdmin, restoreProduct)
 router.delete('/:id', authMiddleware, isAdmin, DeleteProduct)
